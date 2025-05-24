@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Game Cinta untuk Sasa Luvv 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(45deg, #ffb3d9, #ffe6f0, #fff0f5, #ffd4e5);
+            background-size: 400% 400%;
+            animation: gradient 8s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.4);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .game-area {
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .score-board {
+            background: linear-gradient(135deg, #ffe0f0, #fff5fa);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 3px solid #ffb3d9;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #fff0f5, #ffe6f0);
+            border: 3px solid #ffb3d9;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+        }
+
+        .card.flipped {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .card.matched {
+            background: linear-gradient(135deg, #98fb98, #90ee90);
+            color: white;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .message-box {
+            background: linear-gradient(135deg, #ffe0f0, #fff5fa);
+            border: 3px solid #ff69b4;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            text-align: center;
+            animation: messageSlide 0.5s ease;
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #87ceeb, #4169e1);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating {
+            position: absolute;
+            font-size: 20px;
+            animation: float 8s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3em;
+            z-index: 1000;
+            animation: celebrate 2s ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+        }
+
+        @media (max-width: 480px) {
+            .container { margin: 10px; }
+            .game-area { padding: 20px; }
+            .card { font-size: 1.5em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements" id="floating-elements"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🎀 Game Cinta Hello Kitty 🎀</h1>
+            <p>💕 Dari Aii untuk Sasa Luvv yang tersayang 💕</p>
+        </div>
+
+        <div class="game-area">
+            <div class="score-board">
+                <div style="font-size: 1.2em; margin-bottom: 10px;">
+                    🏆 Score: <span id="score">0</span> | 💖 Lives: <span id="lives">3</span>
+                </div>
+                <div id="timer" style="font-size: 1em; color: #ff1493;">⏰ Waktu: 60s</div>
+            </div>
+
+            <div id="game-container">
+                <div class="message-box" id="message-box">
+                    🌸 Halo Sasa Sayangg Luvv youu xixi! 🌸<br>
+                    Mari main game memory bersama Aii! 💕<br>
+                    Temukan pasangan karakter yang sama ya kiww! 🎮✨
+                </div>
+
+                <div class="game-grid" id="game-grid"></div>
+
+                <div class="buttons">
+                    <button class="btn btn-primary" onclick="startGame()">🎮 Mulai Game</button>
+                    <button class="btn btn-secondary" onclick="resetGame()">🔄 Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const characters = ['🐱', '🎀', '💕', '🌸', '⭐', '🍓', '🦄', '🌈'];
+        let gameCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let score = 0;
+        let lives = 18;
+        let gameActive = false;
+        let timeLeft = 60;
+        let gameTimer;
+
+        const romanticMessages = {
+            start: [
+                "🌸 Semangat sayangg! Aii percaya kamu pasti bisa! 💕",
+                "✨ Kamu pasti hebat dalam ini! Fighting Sasa Luvv! 🥰",
+                "🎀 Aii akan mendukungmu dari sini! You can do it! 💖"
+            ],
+            match: [
+                "🎉 Wahh kerennn! Sasa Luvv memang pintar! 😍✨",
+                "💖 Amazing sayangg! Aii bangga banget sama kamu! 🥰",
+                "🌟 Perfect match! Kamu hebat sekali love! 💕",
+                "🎀 Brilliant! My Wifeyy🤍 luar biasa! 😘"
+            ],
+            miss: [
+                "💕 Gapapa sayangg, coba lagi ya! Aii tetap sayangg kamoeh! 🥰",
+                "🌸 Sanss aja love, Aii tau kamu pasti bisa! 💖",
+                "✨ Don't worry Honney, everyone makes mistakes! 😊💕",
+                "🎀 Tetap semangat ya! Aii selalu support kamu! 🤗"
+            ],
+            win: [
+                "🎉🎊 WOHOOOOO! SASA LUVV THE BEST! 😍✨💖",
+                "👑 QUEEN OF MEMORY GAMES! Aii bangga banget! 🥰💕",
+                "🌟 AMAZING! Kamu luar biasa sayangg! I LOVE YOU MWAHH! 😘✨",
+                "💖 PERFECT! Genius banget! Aii falling in love again! 🥰"
+            ],
+            lose: [
+                "💕 Aww sayang, gapapa ya! Kamu tetap yang terbaik kiw kiww! 🥰",
+                "🌸 Coba lagi yuk! Aii yakin next time pasti menang sasa cantikss! 💖",
+                "✨ You're still my champion sasa sayangg! Never give up! 😊💕",
+                "🎀 Tetap cantik walau kalah! Aii cinta kamu apa adanya xixi! 😘"
+            ]
+        };
+
+        function createFloatingElements() {
+            const elements = ['💕', '🌸', '🎀', '✨', '💖', '🐱', '🦄'];
+            const container = document.getElementById('floating-elements');
+            
+            setInterval(() => {
+                const element = document.createElement('div');
+                element.className = 'floating';
+                element.innerHTML = elements[Math.floor(Math.random() * elements.length)];
+                element.style.left = Math.random() * 100 + '%';
+                element.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                container.appendChild(element);
+                
+                setTimeout(() => element.remove(), 8000);
+            }, 1500);
+        }
+
+        function showMessage(type) {
+            const messageBox = document.getElementById('message-box');
+            const messages = romanticMessages[type];
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            messageBox.innerHTML = message;
+        }
+
+        function showCelebration(emoji) {
+            const celebration = document.createElement('div');
+            celebration.className = 'celebration';
+            celebration.innerHTML = emoji;
+            document.body.appendChild(celebration);
+            setTimeout(() => celebration.remove(), 2000);
+        }
+
+        function createGameGrid() {
+            const grid = document.getElementById('game-grid');
+            const shuffledCards = [...characters, ...characters].sort(() => Math.random() - 0.5);
+            
+            grid.innerHTML = '';
+            gameCards = [];
+            
+            shuffledCards.forEach((char, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.character = char;
+                card.dataset.index = index;
+                card.innerHTML = '🎀';
+                card.onclick = () => flipCard(card);
+                grid.appendChild(card);
+                gameCards.push(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (!gameActive || card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) {
+                return;
+            }
+
+            card.classList.add('flipped');
+            card.innerHTML = card.dataset.character;
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                setTimeout(checkMatch, 800);
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            
+            if (card1.dataset.character === card2.dataset.character) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                score += 10;
+                showMessage('match');
+                showCelebration('💖✨');
+                
+                if (matchedPairs === characters.length) {
+                    endGame(true);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    card1.innerHTML = '🎀';
+                    card2.innerHTML = '🎀';
+                }, 300);
+                
+                lives--;
+                showMessage('miss');
+                
+                if (lives <= 0) {
+                    endGame(false);
+                }
+            }
+            
+            flippedCards = [];
+            updateDisplay();
+        }
+
+        function startGame() {
+            gameActive = true;
+            score = 0;
+            lives = 18;
+            matchedPairs = 0;
+            timeLeft = 60;
+            flippedCards = [];
+            
+            createGameGrid();
+            showMessage('start');
+            updateDisplay();
+            
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerHTML = `⏰ Waktu: ${timeLeft}s`;
+                
+                if (timeLeft <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
+
+        function resetGame() {
+            clearInterval(gameTimer);
+            gameActive = false;
+            score = 0;
+            lives = 18;
+            matchedPairs = 0;
+            timeLeft = 60;
+            flippedCards = [];
+            
+            document.getElementById('game-grid').innerHTML = '';
+            document.getElementById('message-box').innerHTML = `
+                🌸 Game direset yaa sasa sayang! 🌸<br>
+                Siap untuk tantangan baluu honey? 💕<br>
+                Aii yakin kamu bisa lebih baik lagi! 🥰✨
+            `;
+            updateDisplay();
+        }
+
+        function endGame(won) {
+            clearInterval(gameTimer);
+            gameActive = false;
+            
+            if (won) {
+                showMessage('win');
+                showCelebration('🎊👑💖');
+                score += timeLeft * 2; // Bonus waktu
+            } else {
+                showMessage('lose');
+                showCelebration('💕🌸');
+            }
+            
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('lives').textContent = lives;
+        }
+
+        // Initialize
+        createFloatingElements();
+        updateDisplay();
+    </script>
+</body>
+</html>
